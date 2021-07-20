@@ -25,19 +25,6 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
   }
 }
 
-resource "aws_s3_bucket" "s3_bucket" {
-  bucket = var.domain_name
-  acl    = "private"
-
-  versioning {
-    enabled = true
-  }
-
-  policy = data.aws_iam_policy_document.s3_bucket_policy.json
-
-  tags = var.tags
-}
-
 data "aws_route53_zone" "domain_name" {
   name         = var.domain_name
   private_zone = false

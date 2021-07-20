@@ -30,7 +30,7 @@ resource "aws_route53_record" "web_validation" {
   }
   name            = each.value.name
   type            = each.value.type
-  zone_id         = data.aws_route53_zone.domain_name.zone_id 
+  zone_id         = data.aws_route53_zone.domain_name.zone_id
   records         = [each.value.record]
   allow_overwrite = true
   ttl             = "60"
