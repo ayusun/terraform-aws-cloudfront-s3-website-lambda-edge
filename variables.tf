@@ -5,12 +5,12 @@ variable "aws_region" {
 }
 
 variable "domain_name" {
-  description = "FQDN of cloudfront alias for the website - blog.site.com"
+  description = "Root of the domain"
   type        = string
 }
 
 variable "subject_alternative_name" {
-  description = "The alternative names of the website, Also used to create SAN certificate"
+  description = "The alternative domains of the website, Also used to create SAN certificate"
   type        = list(string)
   default     = []
 }
