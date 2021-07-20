@@ -3,17 +3,6 @@ provider "aws" {
   alias  = "aws_cloudfront"
 }
 
-data "aws_acm_certificate" "acm_cert" {
-  domain   = "*.${var.hosted_zone}"
-  provider = aws.aws_cloudfront
-
-  //CloudFront uses certificates from US-EAST-1 region only
-
-  statuses = [
-    "ISSUED",
-  ]
-}
-
 data "aws_iam_policy_document" "s3_bucket_policy" {
   statement {
     sid = "1"
@@ -50,7 +39,7 @@ resource "aws_s3_bucket" "s3_bucket" {
 }
 
 data "aws_route53_zone" "domain_name" {
-  name         = var.hosted_zone
+  name         = var.domain_name
   private_zone = false
 }
 
@@ -74,7 +63,7 @@ resource "aws_route53_record" "route53_record" {
 
 // Cloudfront Distro with lambda@Edge integration
 resource "aws_cloudfront_distribution" "s3_distribution" {
-  depends_on = [aws_s3_bucket.s3_bucket]
+  depends_on = [aws_s3_bucket.s3_bucket, aws_acm_certificate.assets]
 
   origin {
     domain_name = "${var.domain_name}.s3.amazonaws.com"
@@ -136,7 +125,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.acm_cert.arn
+    acm_certificate_arn      = aws_acm_certificate.assets.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
