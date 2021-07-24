@@ -22,7 +22,7 @@ Prerequisites:
     }
      
     module "cloudfront_s3_website" {
-        source                   = "github.com/ayusun/terraform-aws-cloudfront-s3-website-lambda-edge.git?ref=2.0.1"
+        source                   = "github.com/ayusun/terraform-aws-cloudfront-s3-website-lambda-edge.git?ref=2.0.0"
         domain_name              = "example.com"
         subject_alternative_name = ["test.example.com"]
         aws_region               = "us-east-1"
