@@ -7,7 +7,7 @@ The following resources will be created
   - Cloudfront distribution
   - Route53 record
   - Lambda@Edge nodejs10.x function to redirect fqdn.com/folder/index.html request to fqdn.com/folder
-  - ACM certificate for *.example.com in us-east-1 region
+  - ACM certificate for example.com (and other CNAMES)in us-east-1 region
 
 
   
@@ -22,8 +22,7 @@ Prerequisites:
     }
      
     module "cloudfront_s3_website" {
-        source                   = "ayusun/cloudfront-s3-website-lambda-edge/aws"
-        version                  = "2.0.0"
+        source                   = "github.com/ayusun/terraform-aws-cloudfront-s3-website-lambda-edge.git?ref=2.0.1"
         domain_name              = "example.com"
         subject_alternative_name = ["test.example.com"]
         aws_region               = "us-east-1"
