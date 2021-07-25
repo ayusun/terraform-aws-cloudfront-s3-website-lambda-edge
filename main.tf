@@ -39,6 +39,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
 
+  # Handling custom Origins
+  dynamic "origin" {
+    for_each = [for i in var.custom_origins : {
+      name = i.domain_name
+      id   = i.origin_id
+      path = i.origin_path
+    }]
+    content {
+      domain_name = origin.value.name
+      origin_id   = origin.value.id
+      origin_path = origin.value.path
+      custom_origin_config {
+        http_port              = "80"
+        https_port             = "443"
+        origin_protocol_policy = "http-only"
+        origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+      }
+    }
+  }
+
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
@@ -76,6 +96,27 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     min_ttl                = 0
     default_ttl            = 86400
     max_ttl                = 31536000
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = [for i in var.ordered_cache_behaviour : {
+      allowed_methods        = i.allowed_methods
+      target_origin_id       = i.target_origin_id
+      path_pattern           = i.path_pattern
+      viewer_protocol_policy = i.viewer_protocol_policy
+      cache_policy_id        = i.cache_policy_id
+      origin_policy_id       = i.origin_request_policy_id
+    }]
+    content {
+      allowed_methods          = ordered_cache_behavior.value.allowed_methods
+      target_origin_id         = ordered_cache_behavior.value.target_origin_id
+      cached_methods           = ["HEAD", "GET", "OPTIONS"]
+      path_pattern             = ordered_cache_behavior.value.path_pattern
+      viewer_protocol_policy   = ordered_cache_behavior.value.viewer_protocol_policy
+      compress                 = true
+      cache_policy_id          = ordered_cache_behavior.value.cache_policy_id
+      origin_request_policy_id = ordered_cache_behavior.value.origin_policy_id
+    }
   }
 
   price_class = "PriceClass_100"
